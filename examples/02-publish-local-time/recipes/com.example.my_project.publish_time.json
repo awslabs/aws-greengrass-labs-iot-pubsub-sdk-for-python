@@ -1,0 +1,83 @@
+{
+  "RecipeFormatVersion": "2020-01-25",
+  "ComponentName": "com.example.my_project.publish_time",
+  "ComponentVersion": "0.0.1",
+  "ComponentDescription": "AWS Greengrass V2 Application SDK recipe skeleton with prescribed IPC and MQTT Topics.",
+  "ComponentPublisher": "Dean Colcott: <https://www.linkedin.com/in/deancolcott/>",
+  "ComponentConfiguration": {
+    "DefaultConfiguration": {
+      "GGV2ComponentConfig": {
+        "mqtt_pubsub_timeout" : 5,
+        "mqtt_service_topic" : "com.example.my_project.publish_time/mqtt/service",
+        "mqtt_data_topic" : "com.example.my_project.publish_time/mqtt/data",
+        "mqtt_broadcast_topic" : "com.example.my_project/mqtt/broadcast",
+        "mqtt_subscribe_topics" : ["com.example.my_project.publish_time/mqtt/service", "com.example.my_project/mqtt/broadcast"],
+        "ipc_pubsub_timeout" : 5,
+        "ipc_service_topic": "com.example.my_project.publish_time/ipc/service",
+        "ipc_data_topic" : "com.example.my_project.publish_time/ipc/data",
+        "ipc_broadcast_topic" : "com.example.my_project/ipc/broadcast",
+        "ipc_subscribe_topics" : ["com.example.my_project.publish_time/ipc/service", "com.example.my_project/ipc/broadcast"]
+      },
+      "accessControl": {
+        "aws.greengrass.ipc.pubsub": {
+          "com.example.my_project.publish_time:publish:1": {
+            "policyDescription": "Allows access to publish to the component IPC data topic and application IPC broadcast topic (and / or others as required).",
+            "operations": [
+              "aws.greengrass#PublishToTopic"
+            ],
+            "resources": [
+              "com.example.my_project.publish_time/ipc/data",
+              "com.example.my_project/ipc/broadcast"
+            ]
+          },
+          "com.example.my_project.publish_time:subscribe:1": {
+            "policyDescription": "Allows access to subscribe to the component IPC service topic and application IPC broadcast topic (and / or others as required).",
+            "operations": [
+              "aws.greengrass#SubscribeToTopic"
+            ],
+            "resources": [
+              "com.example.my_project.publish_time/ipc/service",
+              "com.example.my_project/ipc/broadcast"
+            ]
+          }
+        },
+        "aws.greengrass.ipc.mqttproxy": {
+          "com.example.my_project.publish_time:publish:1": {
+            "policyDescription": "Allows access to publish to the component MQTT data topic and application MQTT broadcast topic(and / or others as required).",
+            "operations": [
+              "aws.greengrass#PublishToIoTCore"
+            ],
+            "resources": [
+              "com.example.my_project.publish_time/mqtt/data",
+              "com.example.my_project/mqtt/broadcast"
+            ]
+          },
+          "com.example.my_project.publish_time:subscribe:1": {
+            "policyDescription": "Allows access to subscribe to the component MQTT service topic and application MQTT broadcast topic (and / or others as required).",
+            "operations": [
+              "aws.greengrass#SubscribeToIoTCore"
+            ],
+            "resources": [
+              "com.example.my_project.publish_time/mqtt/service",
+              "com.example.my_project/mqtt/broadcast"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Manifests": [
+    {
+      "Name": "Linux",
+      "Platform": {
+        "os": "linux"
+      },
+      "Lifecycle": {
+        "Run": {
+          "Script": "python3 -u {artifacts:path}/main.py '{configuration:/GGV2ComponentConfig}'",
+          "RequiresPrivilege": "false"
+        }
+      }
+    }
+  ]
+}
