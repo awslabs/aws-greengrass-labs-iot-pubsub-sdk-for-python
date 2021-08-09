@@ -33,7 +33,7 @@ Once complete, expect to see (can take 30+ seconds):
 Once complete, expect to see the default component deployed:  
 ```Component Name: com.example.my_project.simple_component```
 
-#### Verify the specific example component/s logs:
+#### Verify the simple_component component logs:
 ```sudo tail -f /greengrass/v2/logs/com.example.my_project.simple_component.log```
 
 Once complete, expect to see a 5 second update of the IPC and MQTT PubSub Message publish:  
@@ -50,5 +50,5 @@ At this point you can also view the MQTT PubSub message in the AWS IoT Core cons
 
 In the AWS IoT Core console, subscribe to the publish_time **Data Topic** on **com.example.my_project.simple_component/mqtt/data** you will see an update similar to below:
 
-![simple_component_iot_coonsole](/images/simple_component_iot_console.png)
+![simple_component_iot_console](/images/simple_component_iot_console.png)
 

@@ -237,7 +237,7 @@ At this point you can also view the MQTT PubSub message in the AWS IoT Core cons
 
 In the AWS IoT Core console, subscribe to the publish_time **Data Topic** on **com.example.my_project.publish_time/mqtt/data** you will see a update similar to below:
 
-![pubsub-classes](/images/publish_time_console.png)
+![publish_time_console](/images/publish_time_console.png)
 
 ### Deployment Example Summary
 In the above example, we deployed a simple single component application that published a well-formatted UPDATE message containing the Greengrass core device local time once per second. This exercise is a base for the [02-publish-local-time](examples/02-publish-local-time) example that extends this to include a second Greengrass component that listens and logs the time PubSub message from the IPC PubSub SDK. Compare your code to the publish_time component in that example if needed.
