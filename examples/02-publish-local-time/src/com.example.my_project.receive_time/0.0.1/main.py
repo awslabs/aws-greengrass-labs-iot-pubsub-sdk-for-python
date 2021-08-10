@@ -334,7 +334,7 @@ class AwsGreengrassV2Component():
                 raise Exception('Publish for unknown publish_sdk: {} sent to topic: {}'.format(sdk, topic))
         
         except Exception as err:
-            log.error('EXCEPTION: Error Publishing ERROR: {} - PUBLISH_SDK: {} - TOPIC: {} - MESSAGE: {}'.format(sdk, topic, message, err))
+            log.error('EXCEPTION: Error Publishing ERROR: {} - PUBLISH_SDK: {} - TOPIC: {} - MESSAGE: {}'.format(err, sdk, topic, message))
 
     ##################################################
     # Main service / process application logic
