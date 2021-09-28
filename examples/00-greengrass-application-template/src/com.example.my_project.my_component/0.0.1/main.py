@@ -89,13 +89,13 @@ class AwsGreengrassV2Component():
 
             log.info('Initialising AWS Greengrass V2 Component Complete.')
 
-        except ValueError as val_error: # includes JSON parsing errors
+        except ValueError as val_error: # pragma: no cover 
             log.error('VAL_ERROR: JSON Parsing Error / Unexpected component recipe config message format. ERROR MESSAGE: {} - GG CONFIG: {}'.format(val_error, ggv2_component_config))
 
-        except KeyError as key_error: # includes requests for fields that don't exist in the received config
+        except KeyError as key_error: # pragma: no cover 
             log.error('KEY_ERROR: Component recipe config missing required fields. ERROR MESSAGE: {} - GG CONFIG: {}'.format(key_error, ggv2_component_config))
 
-        except Exception as err:
+        except Exception as err: # pragma: no cover 
             log.error('EXCEPTION: Exception raised initialising AwsGreengrassV2Component. ERROR MESSAGE: {} - GG CONFIG: {}'.format(err, ggv2_component_config))
     
     ##################################################
@@ -168,7 +168,7 @@ class AwsGreengrassV2Component():
         except ValueError as val_error: # includes JSON parsing errors
             log.error('VAL_ERROR: JSON Parsing Error / Unexpected PubSub message format received. ERROR MESSAGE: {} - TOPIC: {} - PAYLOAD: {}'.format(val_error,  topic, payload))
 
-        except KeyError as key_error: # includes requests for fields that don't exist in the received object
+        except KeyError as key_error: # pragma: no cover  # includes requests for fields that don't exist in the received object
             log.error('KEY_ERROR: Received PubSub message missing required fields. ERROR MESSAGE: {} - TOPIC: {} - PAYLOAD: {}'.format(key_error,  topic, payload))
 
         except Exception as err:
@@ -302,8 +302,8 @@ class AwsGreengrassV2Component():
         '''
 
         try:
-
-            # Log teh publish 
+            
+            # Log the publish 
             log.info('Publishing PubSub Message. Topic: {} - Message: {}'.format(topic, message))
 
             # Publish the message to the AWS Greengrass IPC or MQTT sdks
@@ -323,7 +323,7 @@ class AwsGreengrassV2Component():
     # Main service / process application logic
     ##################################################
     
-    def service_loop(self):
+    def service_loop(self): # pragma: no cover
         '''
         Put service specific application logic in the loop here. This also holds the 
         component process up so keep the loop with a small sleep delay even if the 
@@ -343,7 +343,7 @@ class AwsGreengrassV2Component():
             except Exception as err:
                 log.error('EXCEPTION: Exception occurred in service loop - ERROR MESSAGE: {}'.format(err))
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
 
     try:
         # Accepts the Greengrass V2 config from deployment recipe into sys.argv[1] as shown in:

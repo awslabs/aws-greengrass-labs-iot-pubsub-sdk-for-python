@@ -67,10 +67,10 @@ class IpcPubSub():
             self.init_topic_subscriber()
             self.init_topic_publisher()
 
-        except InterruptedError as iErr:
+        except InterruptedError as iErr: # pragma: no cover 
             log.error('INTERRUPTED_EXCEPTION: IPC Topic Publisher / Subscriber init was interrupted. ERROR MESSAGE: {}'.format(iErr))
 
-        except Exception as err:
+        except Exception as err: # pragma: no cover 
             log.error('EXCEPTION: Exception occurred initialising AWS Greengrass IPC Topic PubSub. ERROR MESSAGE: {}'.format(err))
 
     ###############################################
@@ -95,13 +95,13 @@ class IpcPubSub():
                 future = operation.activate(request)
                 future.result(self.ipc_timeout)
 
-            except concurrent.futures.TimeoutError as e:
+            except concurrent.futures.TimeoutError as e: # pragma: no cover
                 log.error('TIMEOUT_ERROR: Timeout occurred while subscribing to IPC topic. ERROR MESSAGE: {} -  TOPIC {}'.format(e, subscribe_topic))
 
-            except UnauthorizedError as e:
+            except UnauthorizedError as e: # pragma: no cover 
                 log.error('UNATHORIZED_ERROR: Unauthorized error while subscribing to IPC topic. ERROR MESSAGE: {} -  TOPIC {}'.format(e, subscribe_topic))
 
-            except Exception as e:
+            except Exception as e: # pragma: no cover 
                 log.error('EXCEPTION: Exception while subscribing to IPC topic. ERROR MESSAGE: {} -  TOPIC {}'.format(e, subscribe_topic))
 
     def init_topic_publisher(self):
@@ -115,7 +115,7 @@ class IpcPubSub():
             self.publish_message = PublishMessage()
             self.publish_message.binary_message = BinaryMessage()
 
-        except Exception as err:
+        except Exception as err: # pragma: no cover
             log.error('EXCEPTION: Exception Initialising IPC Topic Publisher. ERROR MESSAGE: {}'.format(err))
 
     def publish_to_topic(self, topic, message):
@@ -134,16 +134,16 @@ class IpcPubSub():
             future = operation.get_response()
             future.result(self.ipc_timeout)
 
-        except KeyError as key_error: # includes requests for fields that don't exixt in the received object
+        except KeyError as key_error: # pragma: no cover # includes requests for fields that don't exixt in the received object
             log.error('KEY_ERROR: KeyError occurred while publishing to IPC topic. ERROR MESSAGE: {} - TOPIC: {} - MESSAGE: {}'.format(key_error,  topic, message))
 
-        except concurrent.futures.TimeoutError as timeout_error:
+        except concurrent.futures.TimeoutError as timeout_error: # pragma: no cover
             log.error('TIMEOUT_ERROR: Timeout occurred while publishing to IPC topic. ERROR MESSAGE: {} - TOPIC: {} - MESSAGE: {}'.format(timeout_error,  topic, message))
 
-        except UnauthorizedError as unauth_error:
+        except UnauthorizedError as unauth_error: # pragma: no cover
             log.error('UNAUTHORIZED_ERROR: Unauthorized error while publishing to IPC topic. ERROR MESSAGE: {} - TOPIC: {} - MESSAGE: {}'.format(unauth_error,  topic, message))
 
-        except Exception as err:
+        except Exception as err: # pragma: no cover
             log.error('EXCEPTION: Exception while publishing to IPC topic. ERROR MESSAGE: {} - TOPIC: {} - MESSAGE: {}'.format(err,  topic, message))
 
     class TopicSubscriber(client.SubscribeToTopicStreamHandler):
@@ -170,7 +170,8 @@ class IpcPubSub():
 
                 message = str(event.binary_message.message, "utf-8")
                 
-                self.executor.submit(self.message_callback, self.ipc_subscribe_topic, message)
+                
+                self.executor.submit(self.message_callback, self.ipc_subscribe_topic, message) # pragma: no cover
 
             except Exception as err:
                 log.error('EXCEPTION: Exception Raised from IPC Topic Subscriber. ERROR MESSAGE: {} - STREAM EVENT: {}'.format(err, event))

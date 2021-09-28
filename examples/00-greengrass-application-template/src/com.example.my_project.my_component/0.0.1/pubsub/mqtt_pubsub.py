@@ -67,10 +67,10 @@ class MqttPubSub():
             self.init_mqtt_subscriber()
             self.init_mqtt_publisher()
 
-        except InterruptedError as iErr:
+        except InterruptedError as iErr: # pragma: no cover
             log.exception('INTERRUPTED_EXCEPTION: MQTT Iot Core Publisher / Subscriber init was interrupted. ERROR MESSAGE: {}'.format(iErr))
 
-        except Exception as err:
+        except Exception as err: # pragma: no cover
             log.exception('EXCEPTION: Exception occurred initialising AWS Greengrass IPC MQTT Core PubSub. ERROR MESSAGE: {}'.format(err))
 
     ###############################################
@@ -95,13 +95,13 @@ class MqttPubSub():
                 future.result(self.mqtt_timeout)
                 log.info('Complete MQTT subscribing to topic: {}'.format(subscribe_topic))
 
-            except concurrent.futures.TimeoutError as e:
+            except concurrent.futures.TimeoutError as e: # pragma: no cover
                 log.exception('TIMEOUT_ERROR: Timeout occurred while subscribing to IPC MQTT topic. ERROR MESSAGE: {} - TOPIC {}'.format(e, subscribe_topic))
 
-            except UnauthorizedError as e:
+            except UnauthorizedError as e: # pragma: no cover
                 log.exception('UNATHORIZED_ERROR: Unauthorized error while subscribing to IPC MQTT topic. ERROR MESSAGE: {} - TOPIC: {}'.format(e, subscribe_topic))
 
-            except Exception as e:
+            except Exception as e: # pragma: no cover
                 log.exception('EXCEPTION: Exception while subscribing to IPC MQTT topic. ERROR MESSAGE: {} - TOPIC: {}'.format(e, subscribe_topic))
 
     def init_mqtt_publisher(self):
@@ -114,7 +114,7 @@ class MqttPubSub():
             self.mqtt_request = PublishToIoTCoreRequest()
             self.mqtt_request.qos = self.mqtt_qos
 
-        except Exception as err:
+        except Exception as err: # pragma: no cover
             log.exception('EXCEPTION: Exception Initialising MQTT Publisher. ERROR MESSAGE: {}'.format(err))
 
     def publish_to_mqtt(self, topic, message):
@@ -133,16 +133,16 @@ class MqttPubSub():
             future = operation.get_response()
             future.result(self.mqtt_timeout)
 
-        except KeyError as key_error: # includes requests for fields that don't exixt in the received object
+        except KeyError as key_error: # pragma: no cover # includes requests for fields that don't exixt in the received object
             log.exception('KEY_ERROR: KeyError occurred while publishing to IoT Core on MQTT Topic. ERROR MESSAGE: {} - TOPIC: {} - MESSAGE: {}'.format(key_error,  topic, message))
 
-        except concurrent.futures.TimeoutError as timeout_error:
+        except concurrent.futures.TimeoutError as timeout_error: # pragma: no cover
             log.exception('TIMEOUT_ERROR: Timeout occurred while publishing to IoT Core on MQTT Topic. ERROR MESSAGE: {} - TOPIC: {} - MESSAGE: {}'.format(timeout_error,  topic, message))
 
-        except UnauthorizedError as unauth_error:
+        except UnauthorizedError as unauth_error: # pragma: no cover
             log.exception('UNAUTHORIZED_ERROR: Unauthorized error while publishing to IoT Core on MQTT Topic. ERROR MESSAGE: {} - TOPIC: {} - MESSAGE: {}'.format(unauth_error,  topic, message))
 
-        except Exception as err:
+        except Exception as err: # pragma: no cover
             log.exception('EXCEPTION: Exception while publishing to IoT Core on MQTT Topic. ERROR MESSAGE: {} - TOPIC: {} - MESSAGE: {}'.format(err,  topic, message))
     
     class MqttSubscriber(client.SubscribeToIoTCoreStreamHandler):
@@ -169,7 +169,7 @@ class MqttPubSub():
                 
                 self.executor.submit(self.message_callback, topic, message)
 
-            except Exception as err:
+            except Exception as err: # pragma: no cover
                 log.exception('EXCEPTION: Exception Raised from IoT Core on MQTT Subscriber. ERROR MESSAGE: {} - STREAM EVENT: {}'.format(err, event))
 
         def on_stream_error(self, error: Exception) -> bool:
@@ -177,5 +177,5 @@ class MqttPubSub():
             return True  # Return True to close stream, False to keep stream open.
 
         def on_stream_closed(self) -> None:
-            log.exception('ON_STREAM_CLOSED: IoT Core MQTT PubSub Subscriber topic: {} Stream Closed.'.format(self.mqtt_subscribe_topic))
+            log.exception('ON_STREAM_CLOSED: IoT Core MQTT PubSub Subscriber Stream Closed.')
             pass
