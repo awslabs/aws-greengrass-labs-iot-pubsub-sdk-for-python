@@ -112,9 +112,9 @@ aws-greengrass-labs-iot-pubsub-framework
 
 * [**ipc_pubsub.py:**](/src/pubsub/ipc_pubsub.py) A convenience wrapper around the AWS Greengrass [InterProcess communication (IPC)](https://docs.aws.amazon.com/greengrass/v2/developerguide/interprocess-communication.html) library. This initialises the SDK to publish and subscribe to the prescribed topic schema for communication between AWS Greengrass components.
 
-* [**mqtt_pubsub.py:**](/src/mqtt_pubsub.py) As for IPC PubSub, however; the MQTT SDK is responsible for publishing and subscribing to messages using the MQTT protocol between the Greengrass component and the AWS IoT Core platform. 
+* [**mqtt_pubsub.py:**](/src/pubsub/mqtt_pubsub.py) As for IPC PubSub, however; the MQTT SDK is responsible for publishing and subscribing to messages using the MQTT protocol between the Greengrass component and the AWS IoT Core platform. 
 
-* [**pubsub_messages.py:**](/src/pubsub_messages.py) Provides a consistent PubSub message format with defined request / response, message routing and tracing fields.
+* [**pubsub_messages.py:**](/src/pubsub/pubsub_messages.py) Provides a consistent PubSub message format with defined request / response, message routing and tracing fields.
 
 ### PubSub Topic Schema
 One of the first decisions to make when developing a PubSub application is the IPC/MQTT topics that will be used for communications between individual components and the central hub / gateway (The AWS IoT Core in this case). A well-defined PubSub topic schema avoids recursive messages and inter-service dependencies. This framework prescribes a PubSub Topic Schema and PubSub Message Patterns with a small set of pre-defined topics that perform specific functions as described below.
@@ -230,7 +230,7 @@ i.e:
 "RecipeFormatVersion": "2020-01-25",
 "ComponentName": "aws-greengrass-iot-pubsub-framework",
 "ComponentVersion": "0.0.1",
-"ComponentDescription": "AWS Greengrass V2 Application Framework recipe skeleton with prescribed IPC and MQTT Topics.",
+"ComponentDescription": "AWS Greengrass V2 IoT PubSub Framework recipe skeleton with prescribed IPC and MQTT Topics.",
 "ComponentPublisher": "Dean Colcott: <https://www.linkedin.com/in/deancolcott/>",
 "ComponentConfiguration": {
   "DefaultConfiguration": {
@@ -267,7 +267,7 @@ You can of course, extend this or any part of the GGV2ComponentConfig object to 
 
 ### PubSub Access Policy
 
-The Greengrass component recipe defines the components PubSub access policy. The recipe template has been configured to follow the [PubSub Access Policy](/docs/event-driven-pub-sub-architecture.md#pubsub-access-policy) recommended in this framework. The PubSub access policy configured in the recipe template is automatically applied to the component as its deployed to the Greengrass core device/s.
+The Greengrass component recipe defines the components PubSub access policy. The recipe template has been configured to follow the PubSub Access Policy recommended in this framework. The PubSub access policy configured in the recipe template is automatically applied to the component as its deployed to the Greengrass core device/s.
 
 e.g:
 ```
@@ -363,7 +363,7 @@ The PubSub wrappers are not threaded and so any **RECEIVED** message will block 
 Alternatively, the PubSub wrappers use Python concurrent.futures and a ThreadPoolExecutor to **PUBLISH** messages providing concurrency up to the number of threads supported by the core device. The reason for this is to break a protentional thread lock / timeout if a received PubSub message triggers a new message to be published.
 
 ### PubSub Message Routing
-Distributed PubSub applications can quickly become difficult to manage if the topic schema is not well defined and an efficient and repeatable message handling system in place. As the number of topics receiving messages increases, so does the complexity of the application logic. The AWS Greengrass Application Framework solves this with a system that approximates that of a REST based API with a single message callback that validates and normalises incoming messages and then a series of message routers and processors. This simplifies message handling and scales to meet the needs of very simple to very sophisticated applications. 
+Distributed PubSub applications can quickly become difficult to manage if the topic schema is not well defined and an efficient and repeatable message handling system in place. As the number of topics receiving messages increases, so does the complexity of the application logic. The AWS Greengrass IoT PubSub Framework solves this with a system that approximates that of a REST based API with a single message callback that validates and normalises incoming messages and then a series of message routers and processors. This simplifies message handling and scales to meet the needs of very simple to very sophisticated applications. 
 
 ![pubsub-sub-routing](/images/pubsub-sub-routing.png)
 
@@ -412,9 +412,9 @@ i.e main.py:
 
 ### PubSub Message Formats
 
-In general, the PubSub model provides greater flexibility than a REST interface which has more defined control fields. The trade-off is that developers need to design and agree on individual message tracking, return path, message routing and type fields for each application. This is described in more detail in [Event Driven PubSub Applications](docs/event-driven-pub-sub-architecture.md#event-driven-pubsub-applications).
+In general, the PubSub model provides greater flexibility than a REST interface which has more defined control fields. The trade-off is that developers need to design and agree on individual message tracking, return path, message routing and type fields for each application.
 
-Defining message formats for payload, control and routing fields influences many design decisions and ultimately forms a major part of interface contracts. This process can grind even a simple application to a halt with dependencies between components, systems and teams. The AWS Greengrass Application Framework solves this problem by providing a defined message format for REQUEST, RESPONSE and UPDATE message types that have been developed in support of the frameworks prescribed means of PubSub message routing and processing. 
+Defining message formats for payload, control and routing fields influences many design decisions and ultimately forms a major part of interface contracts. This process can grind even a simple application to a halt with dependencies between components, systems and teams. The AWS Greengrass IoT PubSub Framework solves this problem by providing a defined message format for REQUEST, RESPONSE and UPDATE message types that have been developed in support of the frameworks prescribed means of PubSub message routing and processing. 
 
 The message formats are defined in the **pubsub_messages.py** module that offer simple parametrised functions that returns well formatted messages in JSON serializable form.  Applying these formats equally across all components of the distributed IoT application avoids the never-ending interface contract negotiations and updates. 
 
@@ -453,13 +453,12 @@ request = {
 ```
 Notice in the REQUEST message the **reply-sdk** ('ipc' or 'mqtt') and **reply-topic** fields. These allow the requesting message to nominate where any response message should be published to. This removes another dependency on the requesting component to interact with upstream systems if they update or change the local topic schema. 
 
-The below demonstrates how to build and publish the example well-formatted REQUEST PubSub message using the AWS Greengrass Application Framework.
+The below demonstrates how to build and publish the example well-formatted REQUEST PubSub message using the AWS Greengrass IoT PubSub Framework.
 ```
-# Example from main.py. 
 
 #### Create a well formatted REQUEST message #####
+
 # Specify the requested command and param fields to send in the REQUEST.
-# e.g:
 command = 'temp_sensor_request'
 params = {
   "units" : "celsius",
@@ -475,7 +474,7 @@ reply_topic = 'com.example.rx_component/ipc/data'
 request_message = self.pubsub_messages.get_pubsub_request(command, reply_topic, reply_api, params)
 
 #### Publish the REQUEST Message #####
-# e.g (is most common to publish a REQUEST on the receiving components Service Topic):
+# is most common to publish a REQUEST on the receiving components Service Topic.
 
 publish_sdk='ipc'
 publish_topic = 'com.example.my_project.rx_component/ipc/service'
@@ -503,9 +502,8 @@ response = {
 
 In the RESPONSE message, the message_id and command field are reflected from the requesting message. This allows message tracking across request/response flows for any listening component.
 
-The below demonstrates how to build and publish the example well-formatted RESPONSE PubSub message using the AWS Greengrass Application Framework.
+The below demonstrates how to build and publish the example well-formatted RESPONSE PubSub message using the AWS Greengrass IoT PubSub Framework.
 ```
-# Example from main.py. 
 
 #### Create a well formatted RESPONSE message #####
 
@@ -555,7 +553,7 @@ As the developer, you are free to extend on these message formats as long as the
 
 ## Main Module
 
-The final piece of the AWS Greengrass Application framework is the main module. This is called on component boot-up (as nominated by the template component recipe). The Main module provides the PubSub message callback and message processing and routing functions. In a larger production application, you may choose to separate message routers and processors completely or for groups of related functions to an external module. 
+The final piece of the AWS Greengrass IoT PubSub framework is the main module. This is called on component boot-up (as nominated by the template component recipe). The Main module provides the PubSub message callback and message processing and routing functions. In a larger production application, you may choose to separate message routers and processors completely or for groups of related functions to an external module. 
 
 ### Main Application Workflows
 The Main module offers two application workflows. The first, is the main process loop that is called after initialisation is complete. This is the **service_loop** function and is where the component process is held up with a slow loop and where any application logic for the component should be managed from.
@@ -570,5 +568,7 @@ e.g main.py:
         '''
 ```
 The second workflow is message / event driven where application logic is applied purely in response to PubSub message events in the message processors. It’s possible (and common) that application logic is in both the service_loop and event / message driven workflows.
+
+At this point you have both an Event Driven and application process loop to develop against with well-defined message patterns and workflows. Try the examples to learn more, otherwise Happy Hacking! 
 
 

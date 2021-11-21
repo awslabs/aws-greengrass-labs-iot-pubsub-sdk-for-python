@@ -1,12 +1,12 @@
-# AWS Greengrass IoT Pub/Sub Framework
+# AWS Greengrass IoT PubSub Framework
+
+The AWS Greengrass IoT PubSub Framework provides a consistent application architecture, a defined topic schema, opinionated message routing, processing and format patterns delivered via boiler plate code that assures message routing and processing dependencies are met so developers can focus on application logic improving code quality and release velocity of sophisticated IoT PubSub applications on AWS Greengrass V2.
 
 ![gg-framework-architecture](/images/gg-framework-architecture.png)
 
-The PubSub model supports a range of asynchronous message patterns that overcome limitations of REST micro-service style messaging, especially in large scale distributed systems. However, this flexibility will often create unwanted dependencies and design complexity. The AWS Greengrass IoT PubSub framework provides a consistent application architecture, a defined topic schema, opinionated message routing, processing and format patterns delivered via boiler plate code as an AWS Greengrass component service skeleton.  This assures message routing and processing dependencies are met so developers can focus on application logic improving code quality and release velocity of sophisticated IoT PubSub applications. 
-
 Follow the proceding deployment QuickStart to get up and running wih the AWS IoT Greengrass IoT PuSub Framework. For a more detailed description of the solution, go to the [Application Architecture and Developers Guide.](/docs/architecture-and-developer-guide.md)
 
-## Quickstart: Deploying the AWS Greengrass IoT PubSub Framework Component
+## Deploying the AWS Greengrass IoT PubSub Framework Component
 
 ### Prerequisites
 * An AWS Account with required permissions, see [How to Create a new AWS account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) if needed.
@@ -21,7 +21,7 @@ Fork or Clone this repository as per the functionality that best describes your 
 **Method 1: Fork to new Repository:**
 Use this method if starting a new project and you intend to capture the changes into your own Git repository now or in the future.
 
-* To fork this project to your own repository, click the Fork button on this page:
+* To fork this project to your own repository, click the Fork button on the top of this page:
 
 ![click-fork](/images/click-fork.png)
 
@@ -113,7 +113,7 @@ As an example, the AWS Greengrass Skeleton Service Component publishes a simulat
   * Add the below to the Message window and click **Pubish To Topic**
 ```
 {
-  "message-id": "123456789",
+  "message-id": "20211121022417145690",
   "reqres": "request",
   "reply-sdk" : "mqtt",
   "reply-topic" : "aws-greengrass-iot-pubsub-framework/mqtt/data",
