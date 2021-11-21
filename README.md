@@ -2,47 +2,28 @@
 
 ![gg-framework-architecture](/images/gg-framework-architecture.png)
 
-Event-driven applications are all but synonymous with the Publish / Subscribe (PubSub) model where loosely coupled distributed services communicate via asynchronous event triggered messages. Events can be described by a number of real-time triggers that are often associated with Internet of Things (IoT) devices, sensors and actuators.  
-
-The PubSub model supports a range of asynchronous message patterns that overcome limitations of REST micro-service style messaging, especially in large scale distributed systems. Accordingly, event-driven PubSub design patterns are well suited to highly scalable, real-time distributed IoT applications. 
-
-However, this flexibility will often create unwanted dependencies and design complexity. The AWS Greengrass IoT PubSub framework provides a consistent application architecture, a defined topic schema, opinionated message routing, processing and format patterns delivered via boiler plate code as an AWS Greengrass component service skeleton.  This assures message routing and processing dependencies are met so developers can focus on application logic improving code quality and release velocity of sophisticated IoT PubSub applications. 
+The PubSub model supports a range of asynchronous message patterns that overcome limitations of REST micro-service style messaging, especially in large scale distributed systems. However, this flexibility will often create unwanted dependencies and design complexity. The AWS Greengrass IoT PubSub framework provides a consistent application architecture, a defined topic schema, opinionated message routing, processing and format patterns delivered via boiler plate code as an AWS Greengrass component service skeleton.  This assures message routing and processing dependencies are met so developers can focus on application logic improving code quality and release velocity of sophisticated IoT PubSub applications. 
 
 Follow the proceding deployment QuickStart to get up and running wih the AWS IoT Greengrass IoT PuSub Framework. For a more detailed description of the solution, go to the [Application Architecture and Developers Guide.](/docs/architecture-and-developer-guide.md)
-
-
-- [AWS Greengrass IoT Pub/Sub Framework](#aws-greengrass-iot-pub-sub-framework)
-  * [Quickstart: Deploying the AWS Greengrass IoT PubSub Framework Component](#quickstart--deploying-the-aws-greengrass-iot-pubsub-framework-component)
-    + [Prerequisites](#prerequisites)
-    + [Fork or Clone the Greengrass IoT PubSub Application Framework:](#fork-or-clone-the-greengrass-iot-pubsub-application-framework-)
-    + [Publish the AWS Greengrass Skeleton Service Component](#publish-the-aws-greengrass-skeleton-service-component)
-    + [Deploying the AWS Greengrass Skeleton Service Component to an AWS Core.](#deploying-the-aws-greengrass-skeleton-service-component-to-an-aws-core)
-    + [Validating the AWS Greengrass Skeleton Service Component](#validating-the-aws-greengrass-skeleton-service-component)
-    + [Develop the Application Logic.](#develop-the-application-logic)
-    + [Examples](#examples)
-    + [(Optionally) Clean / Delete Unrequired Project Files](#-optionally--clean---delete-unrequired-project-files)
-  * [Summary](#summary)
-  * [Security](#security)
-  * [License](#license)
 
 ## Quickstart: Deploying the AWS Greengrass IoT PubSub Framework Component
 
 ### Prerequisites
 * An AWS Account with required permissions, see [How to Create a new AWS account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) if needed.
-* An [AWS Greengrass V2 core device](https://docs.aws.amazon.com/greengrass/v2/developerguide/setting-up.html) with the [Greengrass CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html) installed.
+* A registered [AWS Greengrass V2 core device](https://docs.aws.amazon.com/greengrass/v2/developerguide/setting-up.html).
 * Knowledge of [AWS Greengrass Components](https://docs.aws.amazon.com/greengrass/v2/developerguide/create-components.html) and the [AWS Greengrass Developer Guide](https://docs.aws.amazon.com/greengrass/v2/developerguide).
-* An active GitHub account and basic working knowledge of Git CLI.
+* An active GitHub account (Optionally if forking this project).
 
-### Fork or Clone the Greengrass IoT PubSub Application Framework:
+### Fork or Clone the Greengrass IoT PubSub Framework:
 
-Choose to Fork or Clone this repository as per the functionality that best describes your goals below.
+Fork or Clone this repository as per the functionality that best describes your goals below.
 
 **Method 1: Fork to new Repository:**
 Use this method if starting a new project and you intend to capture the changes into your own Git repository now or in the future.
 
 * To fork this project to your own repository, click the Fork button on this page:
 
-![click-fork](/images/rest-vs-pubsub.png)
+![click-fork](/images/click-fork.png)
 
 * Then select the Git account or organisation desired and the project will be forked (copied) onto that location. 
 
@@ -53,7 +34,6 @@ Use this method if you are testing / developing locally and don't want to captur
 ```
 # Clone this GIT Repository
 git clone https://github.com/awslabs/aws-greengrass-labs-iot-pubsub-framework.git
-
 ```
 ### Publish the AWS Greengrass Skeleton Service Component
 
@@ -61,20 +41,19 @@ In this guide, we will deploy the component service skeleton to AWS IoT Core usi
 
 At this point in the workflow before publishing your component, you would normally expect to add your own application logic. However, the AWS GDK automatically manages versioning so we will first deploy this component in its default state and you can build on its functionality as needed. 
 
-* Update the AWS GDK config file (greengrass-tools-config.json). 
-Open the src/greengrass-tools-config.json config file and update the listed fields accordingly
+* Update the AWS GDK config file. Open the src/greengrass-tools-config.json config file and update the below fields accordingly
 ```
 {
     "component" :{
-      "aws-labs-iot-pubsub-framework": {  # << Component name will be set to this vakue, update accordingly.
+      "aws-labs-iot-pubsub-framework": {  # << Component name will be set to this value.
         "author": "Amazon",
         "version": "LATEST",
         "build": {
           "build_system" :"zip"
         },
         "publish": {
-          "bucket": "[S3_BUCKET_NAME]",    # << S3 Bucket name prefix. A new bucket will be created starting with this name. 
-          "region": "[AWS_REGION]"         # << Set this to the region your Greengrass core is registered.
+          "bucket": "[S3_BUCKET_NAME]",    # << A new S3 bucket will be created starting with this name. 
+          "region": "[AWS_REGION]"         # << The region your Greengrass core is registered.
         }
       }
     },
@@ -102,7 +81,7 @@ The service skeleton component will now be published to the AWS IoT Core. You ca
 
 ![published-component](/images/published-component.png)
 
-If you changed the component name as described in greengrass-tools-config.json file, the published component name will be as you applied.
+**Note:** If you changed the component name as described in greengrass-tools-config.json file, the published component name will be as you applied.
 
 ### Deploying the AWS Greengrass Skeleton Service Component to an AWS Core.
 
@@ -111,7 +90,7 @@ The final step is to deploy the component to a registered AWS Greengrass Core:
 
 * Select the **Deployments** tab and click on the managed deployment to add this component too.
 * Click **Revise**, **Next** then select the **aws-labs-iot-pubsub-framework** (or the renamed) component
-* Click next leaving all fields default then click **Deploy*
+* Click next leaving all fields default until the final page then click **Deploy**
 
 Note: You can monitor the deployment on the Greengrass core in the following logs:
 * **Greengrass Core Log:** /greengrass/v2/greengrass.log and 
@@ -119,7 +98,7 @@ Note: You can monitor the deployment on the Greengrass core in the following log
 
 ### Validating the AWS Greengrass Skeleton Service Component
 
-As an example, the AWS Greengrass Skeleton Service Component publishes a simulated temperature measurement every 5 seconds to the components data topic (aws-greengrass-iot-pubsub-framework/mqtt/data) and will respond to well-formatted **health_check** request with a status object that is configurable form application logic.  
+As an example, the AWS Greengrass Skeleton Service Component publishes a simulated temperature measurement every 5 seconds to the components data topic (aws-greengrass-iot-pubsub-framework/mqtt/data) and will respond to well-formatted **health_check** request with a status object that is configurable from application logic.  
 
 **Verify the Temperature Updates:**
   * In the [AWS IoT Console](https://ap-southeast-2.console.aws.amazon.com/iot/) go to the **Test** menu and subscribe to the **aws-greengrass-iot-pubsub-framework/mqtt/data** topic. You should see periodic well-formatted updates coming from the Greengrass device to the AWS Core as shown below:
@@ -178,13 +157,13 @@ rm LICENSE
 
 # Optionally delete the Examples and Docs file
 rm -Rf examples
-rm -rf docs
+rm -Rf docs
 
 ```
 
 ## Summary
 
-In this guide we have demonstrated how to build, publish and deploy the AWS Greengrass IoT PubSub Framework as a service skeleton and how to interact with it through simple PubSub message updates and requests. At this point we encourage you to read the [Application Architecture and Developers Guide.](/docs/architecture-and-developer-guide.md) for this project to better understand how to successfully develop AWS Greengrass components and sophisticated IoT PubSub distributed applications with quality, scale and velocity using the AWS Greengrass IoT PubSub Framework. 
+In this guide we have demonstrated how to build, publish and deploy the AWS Greengrass IoT PubSub Framework as a service skeleton and how to interact with it through simple PubSub message updates and requests. At this point we encourage you to read the [Application Architecture and Developers Guide](/docs/architecture-and-developer-guide.md) for this project to better understand how to successfully develop AWS Greengrass components and sophisticated IoT PubSub distributed applications with quality, scale and velocity using the AWS Greengrass IoT PubSub Framework. 
 
 ## Security
 

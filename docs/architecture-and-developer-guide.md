@@ -88,7 +88,7 @@ In this framework, the topic schema and publish / subscribe rules are replicated
 
 ### Anatomy of the AWS Greengrass IoT PubSub Framework
 
-The AWS Greengrass IoT PubSub Framework provides a consistent PubSub topic schema, message workflows, formats and common coding patterns. The application architecture is practically applied through a template AWS Greengrass component skeleton found in the [src](src) directory which comes with AWS Greengrass Deployment (GDK) config.
+The AWS Greengrass IoT PubSub Framework provides a consistent PubSub topic schema, message workflows, formats and common coding patterns. The application architecture is practically applied through a template AWS Greengrass component skeleton found in the [src](/src) directory which comes with AWS Greengrass Deployment (GDK) config.
 
 The AWS Greengrass IoT PubSub Framework component skeleton
 
@@ -104,20 +104,20 @@ aws-greengrass-labs-iot-pubsub-framework
     └── recipe.json                              <--- AWS Greengrass component recipe
 ```
 
-* [**greengrass-tools-config.json:**](src/greengrass-tools-config.json) AWS Greengrass Deployment Kit (GDK) configuration file. 
+* [**greengrass-tools-config.json:**](/src/greengrass-tools-config.json) AWS Greengrass Deployment Kit (GDK) configuration file. 
 
-* [**main.py:**](src/main.py) Main method of the AWS Greengrass Application Template. Provides a PubSub message callback and per topic message routers and processors to simplify and standardised message processing. 
+* [**main.py:**](/src/main.py) Main method of the AWS Greengrass Application Template. Provides a PubSub message callback and per topic message routers and processors to simplify and standardised message processing. 
 
-* [**recipe.json:**](src/recipe.json) A Template [AWS Greengrass Component Recipe](https://docs.aws.amazon.com/greengrass/v2/developerguide/component-recipe-reference.html) with pre-defined config that manages the PubSub topic schema, access policy and other parametrised fields.
+* [**recipe.json:**](/src/recipe.json) A Template [AWS Greengrass Component Recipe](https://docs.aws.amazon.com/greengrass/v2/developerguide/component-recipe-reference.html) with pre-defined config that manages the PubSub topic schema, access policy and other parametrised fields.
 
-* [**ipc_pubsub.py:**](src/pubsub/ipc_pubsub.py) A convenience wrapper around the AWS Greengrass [InterProcess communication (IPC)](https://docs.aws.amazon.com/greengrass/v2/developerguide/interprocess-communication.html) library. This initialises the SDK to publish and subscribe to the prescribed topic schema for communication between AWS Greengrass components.
+* [**ipc_pubsub.py:**](/src/pubsub/ipc_pubsub.py) A convenience wrapper around the AWS Greengrass [InterProcess communication (IPC)](https://docs.aws.amazon.com/greengrass/v2/developerguide/interprocess-communication.html) library. This initialises the SDK to publish and subscribe to the prescribed topic schema for communication between AWS Greengrass components.
 
-* [**mqtt_pubsub.py:**](src/mqtt_pubsub.py) As for IPC PubSub, however; the MQTT SDK is responsible for publishing and subscribing to messages using the MQTT protocol between the Greengrass component and the AWS IoT Core platform. 
+* [**mqtt_pubsub.py:**](/src/mqtt_pubsub.py) As for IPC PubSub, however; the MQTT SDK is responsible for publishing and subscribing to messages using the MQTT protocol between the Greengrass component and the AWS IoT Core platform. 
 
-* [**pubsub_messages.py:**](src/pubsub_messages.py) Provides a consistent PubSub message format with defined request / response, message routing and tracing fields.
+* [**pubsub_messages.py:**](/src/pubsub_messages.py) Provides a consistent PubSub message format with defined request / response, message routing and tracing fields.
 
 ### PubSub Topic Schema
-One of the first decisions to make when developing a PubSub application is the IPC/MQTT topics that will be used for communications between individual components and the central hub / gateway (The AWS IoT Core in this case). A well-defined PubSub topic schema avoids recursive messages and inter-service dependancies. This framework prescribes a PubSub Topic Schema and PubSub Message Patterns with a small set of pre-defined topics that perform specific functions as described below.
+One of the first decisions to make when developing a PubSub application is the IPC/MQTT topics that will be used for communications between individual components and the central hub / gateway (The AWS IoT Core in this case). A well-defined PubSub topic schema avoids recursive messages and inter-service dependencies. This framework prescribes a PubSub Topic Schema and PubSub Message Patterns with a small set of pre-defined topics that perform specific functions as described below.
 
 Prescribed PubSub Topics:
 
@@ -219,20 +219,16 @@ In this framework the PubSub message processing is performed by the convenience 
 ### Message Formatting:
 Both the IPC Topic and MQTT IoT Core PubSub convenience classes expect all messages to be serialised as valid JSON and are parsed into python objects on reception. If invalid JSON, binary, plain text or other formatted message payloads are received the given service will throw an error with a default behaviour of logging and gracefully discarding the message. You can of course as the developer extend this behaviour to update a central component or perform some other action. If a service needs to post binary data it should parse to Base64 and send in the JSON payload remembering that MQTT messages are limited to 8KBs in size. 
 
-## Features and Functionality
+## Application Properties Dependency Injection
 
-The following sections detail the features and functionality of the AWS Greengrass IoT PubSub Framework. 
+In AWS Greengrass V2, the [Component Recipe](https://docs.aws.amazon.com/greengrass/v2/developerguide/component-recipe-reference.html) defines various parameters and lifecycle events for the Greengrass component. The component recipe is JSON formatted and can pass in configuration and metadata to the service. This includes the components functional name, version, description, PubSub access policy and provides a **DefaultConfiguration** tag for JSON fields that can be passed to the Greengrass component application logic. 
 
-### Application Properties Dependency Injection
-
-In AWS Greengrass V2, the [Component Recipe](https://docs.aws.amazon.com/greengrass/v2/developerguide/component-recipe-reference.html) defines various parameters and lifecycle events for the Greengrass component. The component recipe is JSON formatted and can pass in configuration and metadata to the service. This includes the components functional name, version, description, PubSub access policy and provides a **DefaultConfiguration** tag for JSON fields that can be passed to the Greengrass component application logic.
-
-The AWS Greengrass Application Framework defines a DefaultConfiguration field called **GGV2ComponentConfig** in which all configuration values are passed to the components application logic.
+The AWS Greengrass IoT PubSub Framework defines a DefaultConfiguration field called **GGV2ComponentConfig** in which all configuration values are passed to the components application logic. Apart from enforcing consistent design patterns, this config driven approach allows updates of common PubSub application properties and topic schema without the need for application or code updates. 
 
 i.e:
 ```
 "RecipeFormatVersion": "2020-01-25",
-"ComponentName": "com.example.my_project.my_component",
+"ComponentName": "aws-greengrass-iot-pubsub-framework",
 "ComponentVersion": "0.0.1",
 "ComponentDescription": "AWS Greengrass V2 Application Framework recipe skeleton with prescribed IPC and MQTT Topics.",
 "ComponentPublisher": "Dean Colcott: <https://www.linkedin.com/in/deancolcott/>",
@@ -243,61 +239,35 @@ i.e:
 ```
 
 ### PubSub Topic Schema
-One of the first decisions to make when developing a PubSub application is the IPC/MQTT topics that will be used for communications between individual components and the central hub / gateway (The AWS IoT Core in this case). This framework prescribes a [PubSub Topic Schema](docs/event-driven-pub-sub-architecture.md#aws-greengrass-pubsub-message-bus-ipc--mqtt) and [PubSub Message Patterns](docs/event-driven-pub-sub-architecture.md#pubsub-message-patterns) with a small set of pre-defined topics that perform specific functions.
+As previously described, the AWS Greengrass IoT PubSub framework defines three common topics to address most common PubSub message patterns:
 
-These are:
 * **Service Topic:** Messages to the service itself such as status and 1-to-1 data or action request messages.
 * **Data Topic:** Publishing data such as sensor data that other components can subscribe to.
 * **Broadcast Topic:** A system wide broadcast typically to manage components or systems errors.
 
-These topics are config driven in that they are defined in the template component recipe: 
+These are defined in the template component recipe as below
 ```
 "DefaultConfiguration": {
   "GGV2ComponentConfig": {
     "mqtt_pubsub_timeout" : 5,
-    "mqtt_service_topic" : "com.example.my_project.my_component/mqtt/service",
-    "mqtt_data_topic" : "com.example.my_project.my_component/mqtt/data",
+    "mqtt_service_topic" : "aws-greengrass-iot-pubsub-framework/mqtt/service",
+    "mqtt_data_topic" : "aws-greengrass-iot-pubsub-framework/mqtt/data",
     "mqtt_broadcast_topic" : "com.example.my_project/mqtt/broadcast",
-    "mqtt_subscribe_topics" : ["com.example.my_project.my_component/mqtt/service", "com.example.my_project/mqtt/broadcast"],
+    "mqtt_subscribe_topics" : ["aws-greengrass-iot-pubsub-framework/mqtt/service", "com.example.my_project/mqtt/broadcast"],
     "ipc_pubsub_timeout" : 5,
-    "ipc_service_topic": "com.example.my_project.my_component/ipc/service",
-    "ipc_data_topic" : "com.example.my_project.my_component/ipc/data",
-    "ipc_broadcast_topic" : "com.example.my_project/ipc/broadcast",
-    "ipc_subscribe_topics" : ["com.example.my_project.my_component/ipc/service", "com.example.my_project/ipc/broadcast"]
+    "ipc_service_topic": "aws-greengrass-iot-pubsub-framework/ipc/service",
+    "ipc_data_topic" : "aws-greengrass-iot-pubsub-framework/ipc/data",
+    "ipc_broadcast_topic" : "aws-greengrass-iot-pubsub-framework/ipc/broadcast",
+    "ipc_subscribe_topics" : ["aws-greengrass-iot-pubsub-framework/ipc/service", "com.example.my_project/ipc/broadcast"]
   }
 ```
 The Main module reads in and parameterises the individual topics and passes them to the IPC and MQTT PubSub modules which automatically initialises the required publishers and topic subscriptions. Parametrising the PubSub topic schema enforces consistency across components and solves the challenge of updating the applications topic schema without the need for code changes. If applied equally across all Greengrass components in a distributed IoT application; this forms a common set of communications channels to simplify development and greatly reduces dependencies and design decisions needed to get started.
 
 You can of course, extend this or any part of the GGV2ComponentConfig object to add your own config parameters.
 
-### Property Dependency Injection
-The parameterised fields of the framework’s recipe template are passed to the component application logic in the **Lifecycle >> Run** field where we set main.py to call on start-up and pass the GGV2ComponentConfig object as configuration to the application.
-
-```
-"Lifecycle": {
-  "Run": {
-    "Script": "python3 -u {artifacts:path}/main.py '{configuration:/GGV2ComponentConfig}'",
-    "RequiresPrivilege": "false"
-  }
-
-```
-**Note:** You can configure the component to run with root privileges by setting the **RequiresPrivilege** field to **True**
-
-And finally, in main.py of the application template, we accept the GGV2ComponentConfig as sys.argv[1], parse it to a Python Object and provide it to the AwsGreengrassV2Component class.
-
-```
-if __name__ == "__main__":
-
-  try:
-      ggv2_component_config = json.loads(sys.argv[1])
-      ggv2_component = AwsGreengrassV2Component(ggv2_component_config)
-
-      ........
-```
-
 ### PubSub Access Policy
 
-The Greengrass component recipe defines the components PubSub access policy. The recipe template has been configured to follow the [PubSub Access Policy](docs/event-driven-pub-sub-architecture.md#pubsub-access-policy) recommended in this framework. The PubSub access policy configured in the recipe template is automatically applied to the component as its deployed to the Greengrass core device/s.
+The Greengrass component recipe defines the components PubSub access policy. The recipe template has been configured to follow the [PubSub Access Policy](/docs/event-driven-pub-sub-architecture.md#pubsub-access-policy) recommended in this framework. The PubSub access policy configured in the recipe template is automatically applied to the component as its deployed to the Greengrass core device/s.
 
 e.g:
 ```
@@ -327,7 +297,32 @@ e.g:
 
 ```
 
-### PubSub Convenience Classes
+### Property Dependency Injection
+The parameterised fields of the framework’s recipe template described for topic schema and access policies are passed to the component application logic in the **Lifecycle >> Run** field where we set main.py to call on start-up and pass the GGV2ComponentConfig object as configuration to the application.
+
+```
+"Lifecycle": {
+  "Run": {
+    "Script": "python3 -u {artifacts:path}/main.py '{configuration:/GGV2ComponentConfig}'",
+    "RequiresPrivilege": "false"
+  }
+
+```
+**Note:** You can configure the component to run with root privileges by setting the **RequiresPrivilege** field to **True**
+
+And finally, in main.py of the application template, we accept the GGV2ComponentConfig as sys.argv[1], parse it to a Python Object and provide it to the AwsGreengrassV2Component class.
+
+```
+if __name__ == "__main__":
+
+  try:
+      ggv2_component_config = json.loads(sys.argv[1])
+      ggv2_component = AwsGreengrassV2Component(ggv2_component_config)
+
+      ........
+```
+
+## PubSub Convenience Classes
 The application template provides wrappers for the [AWS Greengrass V2 IPC and MQTT PubSub SDKs](https://docs.aws.amazon.com/greengrass/v2/developerguide/interprocess-communication.html) which subscribe to the required topics and initialises publish capabilities as needed. This is the ipc_pubsub.py and mqtt_pubsub.py modules in the application template. 
 
 While source access is provided for the PubSub wrappers, they have been developed to be largely self-sufficient and expected to provide their required functionality of simplified access to the IPC/MQTT SDKs without any user interaction. 
@@ -348,7 +343,7 @@ All received PubSub messages are passed from the PubSub wrappers to the **pubsub
 
 ![pubsub-classes](/images/pubsub-classes.png)
 
-### Message Publishing
+## Message Publishing
 
 The PubSub Wrapper classes also provide a **publish_to_topic** function and the main method parameterises the SDK (IPC or MQTT) to allow simple selection of the SDK to publish a message.
 
@@ -558,11 +553,11 @@ Example UPDATE that periodically publishes local time from the component
 
 As the developer, you are free to extend on these message formats as long as the key tracking and routing fields are not removed.
 
-### Main Module
+## Main Module
 
 The final piece of the AWS Greengrass Application framework is the main module. This is called on component boot-up (as nominated by the template component recipe). The Main module provides the PubSub message callback and message processing and routing functions. In a larger production application, you may choose to separate message routers and processors completely or for groups of related functions to an external module. 
 
-### Application Workflows
+### Main Application Workflows
 The Main module offers two application workflows. The first, is the main process loop that is called after initialisation is complete. This is the **service_loop** function and is where the component process is held up with a slow loop and where any application logic for the component should be managed from.
 
 e.g main.py:
@@ -575,3 +570,5 @@ e.g main.py:
         '''
 ```
 The second workflow is message / event driven where application logic is applied purely in response to PubSub message events in the message processors. It’s possible (and common) that application logic is in both the service_loop and event / message driven workflows.
+
+
