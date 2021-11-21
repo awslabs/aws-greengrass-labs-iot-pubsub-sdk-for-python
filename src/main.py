@@ -2,7 +2,7 @@
 main.py:
 
 Provided as the entry script for an AWS Greengrass V2 custom component. Reads in config
-from the AWS Greengrass V2 component recipe as shown in https://github.com/aws-samples/aws-greengrass-application-framework
+from the AWS Greengrass V2 component recipe as shown in https://github.com/awslabs/aws-greengrass-labs-iot-pubsub-framework
 
 Provides clients for IPC / MQTT PubSub messaging prescribed Topic schemas for:
 1) Service Topic: Messages to / from this service itself such as status request and ACKs of data messages.
@@ -21,8 +21,8 @@ __status__ = "Development"
 import sys
 import json
 import time
+import random   # Note: only needed for processor temp example, can remove otherise. 
 import logging
-import random
 from pubsub.pubsub_messages import PubSubMessages
 from pubsub.ipc_pubsub import IpcPubSub
 from pubsub.mqtt_pubsub import MqttPubSub
@@ -53,8 +53,14 @@ class AwsGreengrassV2Component():
             log.info('Parsing AWS Greengrass V2 Config.')
             log.info('AWS Greengrass V2 Config: {}'.format(ggv2_component_config))
 
-            # Custom component topic variables: 
-            # As needed for specific component / application
+            # This variable is returned in response to a component health_check request.
+            # Update it through the component logic with any valid object to describe 
+            # the current component status.
+            self.health_status = {
+                "health-status-code" : 200,
+                "health-status: ":  "healthy",
+                "last_status_message" : "initilised component"
+            }
 
             # Common variables for all components in this framework / architecture
             self.mqtt_pubsub_timeout = ggv2_component_config['mqtt_pubsub_timeout']
@@ -192,10 +198,10 @@ class AwsGreengrassV2Component():
         '''
 
         if reqres == 'request':
-            self.ipc_service_topic_request(message_id, reqres, command, message)
+            self.ipc_service_topic_request(message_id, command, message)
 
         elif reqres == 'response':
-            self.ipc_service_topic_response(message_id, reqres, command, message)
+            self.ipc_service_topic_response(message_id, command, message)
 
     def mqtt_service_topic_router(self, message_id, reqres, command, message):
         '''
@@ -210,11 +216,11 @@ class AwsGreengrassV2Component():
         '''
 
         if reqres == 'request':
-            self.mqtt_service_topic_request(message_id, reqres, command, message)
+            self.mqtt_service_topic_request(message_id, command, message)
 
         elif reqres == 'response':
-            self.mqtt_service_topic_response(message_id, reqres, command, message)
-
+            self.mqtt_service_topic_response(message_id, command, message)
+    
     def application_broadcast_topic_router(self, message_id, reqres, command, message):
         '''
             Route PubSub messages to this components Application Broadcast topic.
@@ -228,10 +234,10 @@ class AwsGreengrassV2Component():
         '''
 
         if reqres == 'request':
-            self.application_broadcast_topic_request(message_id, reqres, command, message)
+            self.application_broadcast_topic_request(message_id, command, message)
 
         elif reqres == 'response':
-            self.application_broadcast_topic_response(message_id, reqres, command, message)
+            self.application_broadcast_topic_response(message_id, command, message)
 
     # AWS Greengrass application custom topic subscription routers. 
     # As needed for specific component / application
@@ -241,15 +247,18 @@ class AwsGreengrassV2Component():
     ##################################################    
 
     # Exmple AWS Greengrass V2 Aplication SDK message processors
-    def ipc_service_topic_request(self, message_id, reqres, command, message):
+    def ipc_service_topic_request(self, message_id, command, message):
         '''
             Process PubSub REQUEST type messages to the IPC service topic.
 
-            In this example we just log the message.
+            In this example we log the message and process if is a health_check request command.
         '''
         log.info('Received PubSub REQUEST on IPC Service topic. Message: {}'.format(message))
 
-    def ipc_service_topic_response(self, message_id, reqres, command, message):
+        if (command == "health_check"):
+            self.health_request_processor(message_id, command, message)
+
+    def ipc_service_topic_response(self, message_id, command, message):
         '''
             Process PubSub RESPOSNE type messages to the IPC service topic.
 
@@ -257,15 +266,18 @@ class AwsGreengrassV2Component():
         '''
         log.info('Received PubSub RESPONSE on IPC Service topic. Message: {}'.format(message))
 
-    def mqtt_service_topic_request(self, message_id, reqres, command, message):
+    def mqtt_service_topic_request(self, message_id, command, message):
         '''
             Process PubSub REQUEST type messages to the MQTT service topic.
 
-            In this example we just log the message.
+            In this example we log the message and process if is a health_check request command.
         '''
         log.info('Received PubSub REQUEST on MQTT Service topic. Message: {}'.format(message))
 
-    def mqtt_service_topic_response(self, message_id, reqres, command, message):
+        if (command == "health_check"):
+            self.health_request_processor(message_id, command, message)
+
+    def mqtt_service_topic_response(self, message_id, command, message):
         '''
             Process PubSub RESPOSNE type messages to the IoT Core MQTT service topic.
 
@@ -273,7 +285,7 @@ class AwsGreengrassV2Component():
         '''
         log.info('Received PubSub RESPONSE on IoT Core MQTT Service topic. Message: {}'.format(message))
 
-    def application_broadcast_topic_request(self, message_id, reqres, command, message):
+    def application_broadcast_topic_request(self, message_id, command, message):
         '''
             Process PubSub REQUEST type messages to the application broadcast topic.
 
@@ -281,7 +293,7 @@ class AwsGreengrassV2Component():
         '''
         log.info('Received PubSub REQUEST on the Application Broadcast topic. Message: {}'.format(message))
 
-    def application_broadcast_topic_response(self, message_id, reqres, command, message):
+    def application_broadcast_topic_response(self, message_id, command, message):
         '''
             Process PubSub RESPONSE type messages to the application broadcast topic.
 
@@ -291,6 +303,22 @@ class AwsGreengrassV2Component():
 
     # AWS Greengrass application custom topic message processors. 
     # As needed for specific component / application
+    # Simple component health check example provided. 
+
+    def health_request_processor(self, message_id, command, message):
+
+        # Create the RESPONSE message format.
+        status = 200                    # The response message status, not health status. 
+        data = self.health_status       # Return any data needed in health_status object
+        response_message = self.pubsub_messages.get_pubsub_response(message_id, command, status, data)
+
+        # Get the requests reply SDK ('ipc' || 'mqtt' and reply topic from the request message) 
+        # is possible that a request received on IPC is responsed to via MQTT.
+        reply_sdk = message['reply-sdk']; 
+        reply_topic = message['reply-topic']
+        
+        # Publish the message to requested SDK and topic
+        self.publish_message(reply_sdk, reply_topic, response_message)
 
     ##################################################
     ### PubSub Message Publisher
@@ -333,21 +361,55 @@ class AwsGreengrassV2Component():
         # If this component is completely event driven based on PubSub messages or other triggers 
         # just do a slow loop here  to hold the process up (or do so some other way).
         # Otherwise add application logic here as needed.
+        #
+        # In this example we call the publish_processor_temp method every 5 secs. 
 
         while True:
             try:
 
-                # Keep a slow loop delay to keep the component process up.
+                self.publish_processor_temp()
+
+                # Keep a slow loop delay to hold the component process up.
                 time.sleep(5)
 
             except Exception as err:
                 log.error('EXCEPTION: Exception occurred in service loop - ERROR MESSAGE: {}'.format(err))
 
+
+
+    def publish_processor_temp(self):
+        '''
+        In this example we publish an unsolicited update message to this components 
+        data topic to the MQTT API so can be viewed in the AWS IoT Core.
+
+        The example is sending a random value between 40 and 50 to represent reading 
+        and publishing edge devices processor temperature. 
+        '''
+        
+        try:
+            ### Create an example data update command and params fields
+            command = 'processor_temp_update'
+            status = 200
+            params = {
+                "units" : "Celsius",
+                "value" : random.randint(40,50)
+            }
+
+            # Create the UPDATE message well-formatted object
+            update_message = self.pubsub_messages.get_pubsub_update(command, status, params)
+            
+            # Publish the message to this components MQTT Data Topic
+            # Once deployed, this message will be viewable in the AWS IoT Core
+            self.publish_message('mqtt', self.mqtt_data_topic, update_message)
+
+        except Exception as err:
+                log.error('EXCEPTION: Exception in publish_processor_temp - ERROR MESSAGE: {}'.format(err))
+
 if __name__ == "__main__": # pragma: no cover
 
     try:
         # Accepts the Greengrass V2 config from deployment recipe into sys.argv[1] as shown in:
-        # https://github.com/aws-samples/aws-greengrass-application-framework
+        # https://github.com/awslabs/aws-greengrass-labs-iot-pubsub-framework
         ggv2_component_config = json.loads(sys.argv[1])
         ggv2_component = AwsGreengrassV2Component(ggv2_component_config)
 

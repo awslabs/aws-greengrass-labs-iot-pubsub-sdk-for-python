@@ -1,0 +1,16 @@
+{
+    "component" :{
+      "aws-labs-iot-pubsub-framework": {
+        "author": "Amazon",
+        "version": "LATEST",
+        "build": {
+          "build_system" :"zip"
+        },
+        "publish": {
+          "bucket": "aws-greengrass-components",
+          "region": "ap-southeast-2"
+        }
+      }
+    },
+    "tools_version": "1.0.0"
+  }
