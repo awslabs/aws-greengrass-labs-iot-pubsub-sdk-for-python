@@ -4,14 +4,15 @@ The AWS Greengrass IoT PubSub Framework provides a consistent application archit
 
 ![gg-framework-architecture](/images/gg-framework-architecture.png)
 
-Follow the proceding deployment QuickStart to get up and running wih the AWS IoT Greengrass IoT PuSub Framework. For a more detailed description of the solution, go to the [Application Architecture and Developers Guide.](/docs/architecture-and-developer-guide.md)
+Follow the proceeding deployment QuickStart to get up and running with the AWS IoT Greengrass IoT PuSub Framework. For a more detailed description of the solution, go to the [Application Architecture and Developers Guide.](/docs/architecture-and-developer-guide.md)
 
 ## Deploying the AWS Greengrass IoT PubSub Framework Component
 
 ### Prerequisites
 * An AWS Account with required permissions, see [How to Create a new AWS account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) if needed.
-* A registered [AWS Greengrass V2 core device](https://docs.aws.amazon.com/greengrass/v2/developerguide/setting-up.html).
+* A registered [AWS Greengrass V2 core device](https://docs.aws.amazon.com/greengrass/v2/developerguide/setting-up.html)
 * Knowledge of [AWS Greengrass Components](https://docs.aws.amazon.com/greengrass/v2/developerguide/create-components.html) and the [AWS Greengrass Developer Guide](https://docs.aws.amazon.com/greengrass/v2/developerguide).
+* AWS Greengrass Development Kit installed.
 * An active GitHub account (Optionally if forking this project).
 
 ### Fork or Clone the Greengrass IoT PubSub Framework:
@@ -35,17 +36,18 @@ Use this method if you are testing / developing locally and don't want to captur
 # Clone this GIT Repository
 git clone https://github.com/awslabs/aws-greengrass-labs-iot-pubsub-framework.git
 ```
+
 ### Publish the AWS Greengrass Skeleton Service Component
 
 In this guide, we will deploy the component service skeleton to AWS IoT Core using the AWS Greengrass Deployment Kit (GDK). The AWS GDK is a simple command line tool to build and publish Greengrass components to the AWS IoT core. It can be downloaded and installed at: (TODO: waiting public reference).
 
 At this point in the workflow before publishing your component, you would normally expect to add your own application logic. However, the AWS GDK automatically manages versioning so we will first deploy this component in its default state and you can build on its functionality as needed. 
 
-* Update the AWS GDK config file. Open the src/greengrass-tools-config.json config file and update the below fields accordingly
+* Update the AWS GDK config file. Open the src/gdk-config.json config file and update the below fields accordingly
 ```
 {
     "component" :{
-      "aws-labs-iot-pubsub-framework": {  # << Component name will be set to this value.
+      "aws-greengrass-labs-iot-pubsub-framework": {  # << Component name will be set to this value.
         "author": "Amazon",
         "version": "LATEST",
         "build": {
@@ -68,25 +70,25 @@ At this point in the workflow before publishing your component, you would normal
 cd aws-greengrass-labs-iot-pubsub-framework/src
 
 # Build the component:
-greengrass-tools component build -d
+gdk component build -d
 
 # The above will create a greengrass-build and a zip-build directory with all of the files need to publish the component to the AWS Core.
 
 # Publish the component to AWS Core:
-greengrass-tools component publish -d
+gdk component publish -d
 
 ```
 
-The service skeleton component will now be published to the AWS IoT Core. You can verify in the [AWS IoT Console](https://ap-southeast-2.console.aws.amazon.com/iot/) by going to the **Components** section under the **Greengrass** menu as shown below:
+The service skeleton component will now be published to the AWS IoT Core. You can verify in the [AWS IoT Console](https://console.aws.amazon.com/iot/) by going to the **Components** section under the **Greengrass** menu as shown below:
 
 ![published-component](/images/published-component.png)
 
-**Note:** If you changed the component name as described in greengrass-tools-config.json file, the published component name will be as you applied.
+**Note:** If you changed the component name as described in gdk-config.json file, the published component name will be as you applied.
 
 ### Deploying the AWS Greengrass Skeleton Service Component to an AWS Core.
 
 The final step is to deploy the component to a registered AWS Greengrass Core:
-* In the [AWS IoT Console](https://ap-southeast-2.console.aws.amazon.com/iot/) go to **Greengrass >> Core devices** menu item and click on the Greengrass core to deploy too.
+* In the [AWS IoT Console](https://console.aws.amazon.com/iot/) go to **Greengrass >> Core devices** menu item and click on the Greengrass core to deploy too.
 
 * Select the **Deployments** tab and click on the managed deployment to add this component too.
 * Click **Revise**, **Next** then select the **aws-labs-iot-pubsub-framework** (or the renamed) component
@@ -101,12 +103,12 @@ Note: You can monitor the deployment on the Greengrass core in the following log
 As an example, the AWS Greengrass Skeleton Service Component publishes a simulated temperature measurement every 5 seconds to the components data topic (aws-greengrass-iot-pubsub-framework/mqtt/data) and will respond to well-formatted **health_check** request with a status object that is configurable from application logic.  
 
 **Verify the Temperature Updates:**
-  * In the [AWS IoT Console](https://ap-southeast-2.console.aws.amazon.com/iot/) go to the **Test** menu and subscribe to the **aws-greengrass-iot-pubsub-framework/mqtt/data** topic. You should see periodic well-formatted updates coming from the Greengrass device to the AWS Core as shown below:
+  * In the [AWS IoT Console](https://console.aws.amazon.com/iot/) go to the **Test** menu and subscribe to the **aws-greengrass-iot-pubsub-framework/mqtt/data** topic. You should see periodic well-formatted updates coming from the Greengrass device to the AWS Core as shown below:
 
 ![temp-update-message](/images/temp-update-message.png)
 
 **Send a Greengrass component Health Check Request:**
-  * In the [AWS IoT Console](https://ap-southeast-2.console.aws.amazon.com/iot/) go to the **Test** menu and subscribe to the **aws-greengrass-iot-pubsub-framework/mqtt/data**. (Can use the same session as above if still open). 
+  * In the [AWS IoT Console](https://console.aws.amazon.com/iot/) go to the **Test** menu and subscribe to the **aws-greengrass-iot-pubsub-framework/mqtt/data**. (Can use the same session as above if still open). 
 
   * In the **Publish** section update the publish topic to **aws-greengrass-iot-pubsub-framework/mqtt/service** 
 

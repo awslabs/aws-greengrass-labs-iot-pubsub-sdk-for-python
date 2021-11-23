@@ -1,6 +1,6 @@
 {
   "RecipeFormatVersion": "2020-01-25",
-  "ComponentName": "aws-greengrass-iot-pubsub-framework",
+  "ComponentName": "aws-greengrass-labs-iot-pubsub-framework",
   "ComponentVersion": "0.0.1",
   "ComponentDescription": "AWS Greengrass V2 IoT PubSub SDK recipe skeleton with prescribed IPC and MQTT Topics.",
   "ComponentPublisher": "Dean Colcott: <https://www.linkedin.com/in/deancolcott/>",
