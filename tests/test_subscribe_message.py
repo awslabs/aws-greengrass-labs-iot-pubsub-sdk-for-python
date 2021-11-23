@@ -3,13 +3,10 @@ import json
 import pytest
 import logging
 
-# Import the boilerplate example
-sys.path.append('examples/00-greengrass-application-template/src/com.example.my_project.my_component/0.0.1/')
+# Import the src directory
+sys.path.append('src')
 
-from main import AwsGreengrassV2Component
-from pubsub.pubsub_messages import PubSubMessages
-from pubsub.ipc_pubsub import IpcPubSub
-from pubsub.mqtt_pubsub import MqttPubSub
+from src.main import AwsGreengrassV2Component
 
 def test_subscribe_message_types(mocker, monkeypatch, caplog):
 
@@ -19,7 +16,7 @@ def test_subscribe_message_types(mocker, monkeypatch, caplog):
     ipc_connect = mocker.patch("awsiot.greengrasscoreipc.connect")
 
     # Read in the GG Component recipe config details
-    f = open('examples/00-greengrass-application-template/recipes/com.example.my_project.my_component.json',)
+    f = open('src/recipe.json',)
     data = json.load(f)
     ggv2_component_config = data["ComponentConfiguration"]["DefaultConfiguration"]["GGV2ComponentConfig"]
 

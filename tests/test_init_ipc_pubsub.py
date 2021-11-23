@@ -4,14 +4,10 @@ import pytest
 import logging
 import awsiot.greengrasscoreipc.model as model
 
-# Import the boilerplate example
-sys.path.append('examples/00-greengrass-application-template/src/com.example.my_project.my_component/0.0.1/')
+# Import the src directory
+sys.path.append('src')
 
-
-from main import AwsGreengrassV2Component
-from pubsub.pubsub_messages import PubSubMessages
-from pubsub.ipc_pubsub import IpcPubSub
-from pubsub.mqtt_pubsub import MqttPubSub
+from src.pubsub.ipc_pubsub import IpcPubSub
 
 def test_init_ipc_pubsub(mocker, monkeypatch, caplog):
 
@@ -24,7 +20,7 @@ def test_init_ipc_pubsub(mocker, monkeypatch, caplog):
     thread_executor = mocker.patch("concurrent.futures.ThreadPoolExecutor" )
 
     # Read in the GG Component recipe config details
-    f = open('examples/00-greengrass-application-template/recipes/com.example.my_project.my_component.json',)
+    f = open('src/recipe.json',)
     data = json.load(f)
     ggv2_component_config = data["ComponentConfiguration"]["DefaultConfiguration"]["GGV2ComponentConfig"]
 
