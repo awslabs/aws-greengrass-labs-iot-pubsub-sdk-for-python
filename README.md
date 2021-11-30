@@ -49,7 +49,7 @@ At this point in the workflow before publishing your component, you would normal
     "component" :{
       "aws-greengrass-labs-iot-pubsub-framework": {  # << Component name will be set to this value.
         "author": "Amazon",
-        "version": "LATEST",
+        "version": "NEXT_PATCH",
         "build": {
           "build_system" :"zip"
         },
@@ -59,7 +59,7 @@ At this point in the workflow before publishing your component, you would normal
         }
       }
     },
-    "tools_version": "1.0.0"
+    "gdk_version": "1.0.0"
   }
 
 ```

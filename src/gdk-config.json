@@ -2,7 +2,7 @@
     "component" :{
       "aws-greengrass-labs-iot-pubsub-framework": {
         "author": "Amazon",
-        "version": "LATEST",
+        "version": "NEXT_PATCH",
         "build": {
           "build_system" :"zip"
         },
@@ -12,5 +12,5 @@
         }
       }
     },
-    "tools_version": "1.0.0"
+    "gdk_version": "1.0.0"
   }
