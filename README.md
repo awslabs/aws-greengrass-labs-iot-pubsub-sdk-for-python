@@ -39,7 +39,7 @@ git clone https://github.com/awslabs/aws-greengrass-labs-iot-pubsub-framework.gi
 
 ### Publish the AWS Greengrass Skeleton Service Component
 
-In this guide, we will deploy the component service skeleton to AWS IoT Core using the AWS Greengrass Deployment Kit (GDK). The AWS GDK is a simple command line tool to build and publish Greengrass components to the AWS IoT core. It can be downloaded and installed at: (TODO: waiting public reference).
+In this guide, we will deploy the component service skeleton to AWS IoT Core using the AWS IoT Greengrass Development Kit (GDK). The AWS GDK is a simple command line tool to build and publish Greengrass components to the AWS IoT core. It can be downloaded and installed from the [aws-greengrass-gdk-cli](https://github.com/aws-greengrass/aws-greengrass-gdk-cli) repository. More information can be found in the [AWS IoT Greengrass Development Kit](https://docs.aws.amazon.com/greengrass/v2/developerguide/greengrass-development-kit-cli.html) section of the Iot Greengrass developers guide.  
 
 At this point in the workflow before publishing your component, you would normally expect to add your own application logic. However, the AWS GDK automatically manages versioning so we will first deploy this component in its default state and you can build on its functionality as needed. 
 
