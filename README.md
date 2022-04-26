@@ -1,3 +1,5 @@
+**Note:** The design and principals discussed in this AWS Greengrass Component Framework have been released as an SDK / Python library available in the [AWS Greengrass PubSub Component SDK](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python). If developing an AWS Greengrass based applicaction using this PubSub architecture, the PubSub Component SDK is the simplest way to get started.
+
 # AWS Greengrass IoT PubSub Framework
 
 The AWS Greengrass IoT PubSub Framework provides a consistent application architecture, a defined topic schema, opinionated message routing, processing and format patterns delivered via boiler plate code that assures message routing and processing dependencies are met so developers can focus on application logic improving code quality and release velocity of sophisticated IoT PubSub applications on AWS Greengrass V2.
