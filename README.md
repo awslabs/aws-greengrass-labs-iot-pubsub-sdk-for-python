@@ -1,177 +1,223 @@
-**Note:** The design and principals discussed in this AWS Greengrass Component Framework have been released as an SDK / Python library available in the [AWS Greengrass PubSub Component SDK](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python). If developing an AWS Greengrass based applicaction using this PubSub architecture, the PubSub Component SDK is the simplest way to get started.
+# AWS IoT Greengrass PubSub SDK for Python
 
-# AWS Greengrass IoT PubSub Framework
+This document provides information about the AWS IoT Greengrass PubSub SDK for Python.
 
-The AWS Greengrass IoT PubSub Framework provides a consistent application architecture, a defined topic schema, opinionated message routing, processing and format patterns delivered via boiler plate code that assures message routing and processing dependencies are met so developers can focus on application logic improving code quality and release velocity of sophisticated IoT PubSub applications on AWS Greengrass V2.
+If you have any issues or feature requests, please file an issue or pull request.
 
-![gg-framework-architecture](/images/gg-framework-architecture.png)
+**Note:** This is a library based implementation and replacement for the AWS IoT Greengrass PubSub Framework previoulsy hosted in this repository. 
 
-Follow the proceeding deployment QuickStart to get up and running with the AWS IoT Greengrass IoT PuSub Framework. For a more detailed description of the solution, go to the [Application Architecture and Developers Guide.](/docs/architecture-and-developer-guide.md)
+## Overview
 
-## Deploying the AWS Greengrass IoT PubSub Framework Component
+The AWS IoT Greengrass PubSub SDK for Python provides an IoT PubSub application architecture delivered as a Python library to simplify and accelerate development of distributed IoT applications built on AWS IoT Greengrass Components. The SDK abstracts the AWS IoT Greengrass IPC and MQTT PubSub functionality and uses a data driven message format to route PubSub messages to user defined call-backs. This provides a Low/No-Code PubSub messaging service without the common design dependencies of distributed IoT applications. 
 
-### Prerequisites
-* An AWS Account with required permissions, see [How to Create a new AWS account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) if needed.
-* A registered [AWS Greengrass V2 core device](https://docs.aws.amazon.com/greengrass/v2/developerguide/setting-up.html)
-* Knowledge of [AWS Greengrass Components](https://docs.aws.amazon.com/greengrass/v2/developerguide/create-components.html) and the [AWS Greengrass Developer Guide](https://docs.aws.amazon.com/greengrass/v2/developerguide).
-* AWS Greengrass Development Kit installed.
-* An active GitHub account (Optionally if forking this project).
+![pubsub-sdk-overview](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/blob/main/images/pubsub-sdk-overview.png)
 
-### Fork or Clone the Greengrass IoT PubSub Framework:
+For more details see the AWS IoT Greengrass PubSub SDK:
+* [Developer Guide](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/docs/developer-guide)
+* [API Docs](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/docs/api-docs)
+* [Samples](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/samples)
+* [Detailed Deployment Workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/32dc1f13-985f-4f94-9b86-a859806d28f0)
 
-Fork or Clone this repository as per the functionality that best describes your goals below.
+## Getting Started
 
-**Method 1: Fork to new Repository:**
-Use this method if starting a new project and you intend to capture the changes into your own Git repository now or in the future.
+The easiest way to get started is to build and deploy the AWS IoT Greengrass PubSub SDK component template described in the [Samples](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/samples) directory.
 
-* To fork this project to your own repository, click the Fork button on the top of this page:
+For new users just starting out with AWS IoT Greengrass or those that want to see a more detailed example of using the SDK to deploy multiple components that we recommend running through the workshop [Build a Distributed IoT Application with the AWS IoT Greengrass PubSub SDK](https://catalog.us-east-1.prod.workshops.aws/workshops/32dc1f13-985f-4f94-9b86-a859806d28f0/en-US) where you build a Smar Factory IoT application usng the AWS Iot Greengrass PubSub SDK. 
 
-![click-fork](/images/click-fork.png)
+## Installation
 
-* Then select the Git account or organisation desired and the project will be forked (copied) onto that location. 
+### Minimum Requirements
+*   Python 3.6+
 
-* Finally, substitute in your new repository details and follow the Git clone instructions below to take a local copy of the project to develop.
+### Install via an AWS IoT Greengrass Custom Component Recipe
 
-**Method 2: Clone to Local Copy:**
-Use this method if you are testing / developing locally and don't want to capture and version any changes you make into a separate Git repository.
+To configure the AWS IoT Greengrass PubSub SDK to deploy with an AWS IoT Greengrass Component, update the recipe Lifecycle / Install event as per below:
 ```
-# Clone this GIT Repository
-git clone https://github.com/awslabs/aws-greengrass-labs-iot-pubsub-framework.git
+"Lifecycle": {
+  "Install" : {
+    "Timeout" : 300,
+    "Script" : "python3 -m pip install awsgreengrasspubsubsdk"
+  },
+  .....
 ```
 
-### Publish the AWS Greengrass Skeleton Service Component
+ A full example of this is given in the [Greengrass component recipe example](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/blob/main/samples/gg-pubsub-sdk-component-template/src/recipe.json)
 
-In this guide, we will deploy the component service skeleton to AWS IoT Core using the AWS IoT Greengrass Development Kit (GDK). The AWS GDK is a simple command line tool to build and publish Greengrass components to the AWS IoT core. It can be downloaded and installed from the [aws-greengrass-gdk-cli](https://github.com/aws-greengrass/aws-greengrass-gdk-cli) repository. More information can be found in the [AWS IoT Greengrass Development Kit](https://docs.aws.amazon.com/greengrass/v2/developerguide/greengrass-development-kit-cli.html) section of the Iot Greengrass developers guide.  
+### Installing Manually
+The AWS IoT Greengrass PubSub SDK provides functionality within an AWS IoT Greengrass component. It only has context within that framework and so for production solutions, its preferred to deploy the SDK with the component as described in the previous example. Manual installation examples given below are intended for development machines. 
 
-At this point in the workflow before publishing your component, you would normally expect to add your own application logic. However, the AWS GDK automatically manages versioning so we will first deploy this component in its default state and you can build on its functionality as needed. 
+**Note**: If installing manually, do so as the user that will own the Greengrass component process (i.e: gcc_user by default).
 
-* Update the AWS GDK config file. Open the src/gdk-config.json config file and update the below fields accordingly
+#### Install from PyPI
+```
+python3 -m pip install awsgreengrasspubsubsdk
+```
+
+#### Install from source
+```
+git clone https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python.git
+python3 -m pip install ./aws-greengrass-pubsub-sdk-for-python
+```
+
+## Usage and Code Examples
+
+Once the AWS IoT Greengrass PubSub SDK is deployed with an AWS IoT Greengrass Component, you can route messages to your application logic via user defined Message Handlers that you register with the SDK 
+
+A production ready AWS IoT Greengrass component template and more detailed examples are provided in the [Samples](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/samples) directory.
+
+The SDK defines the following required message format (with more details provided in the [Developer Guide](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/docs/developer-guide)
 ```
 {
-    "component" :{
-      "aws-greengrass-labs-iot-pubsub-framework": {  # << Component name will be set to this value.
-        "author": "Amazon",
-        "version": "NEXT_PATCH",
-        "build": {
-          "build_system" :"zip"
-        },
-        "publish": {
-          "bucket": "[S3_BUCKET_NAME]",    # << A new S3 bucket will be created starting with this name. 
-          "region": "[AWS_REGION]"         # << The region your Greengrass core is registered.
-        }
-      }
-    },
-    "gdk_version": "1.0.0"
+  "sdk_version": "0.1.4",
+  "message_id": "20220403170948930231",
+  "status": 200,
+  "route": "MyPubSubMessageHandler.pubsub_message_route_target",
+  "message": {
+    "my-message-param01": "param01",
+    "my-message-param02": "param02"
   }
-
-```
-
-* To build and publish the AWS IoT PubSub service skeleton:
-```
-# CD into the locally cloned component service skeleton src directory
-cd aws-greengrass-labs-iot-pubsub-framework/src
-
-# Build the component:
-gdk component build -d
-
-# The above will create a greengrass-build and a zip-build directory with all of the files need to publish the component to the AWS Core.
-
-# Publish the component to AWS Core:
-gdk component publish -d
-
-```
-
-The service skeleton component will now be published to the AWS IoT Core. You can verify in the [AWS IoT Console](https://console.aws.amazon.com/iot/) by going to the **Components** section under the **Greengrass** menu as shown below:
-
-![published-component](/images/published-component.png)
-
-**Note:** If you changed the component name as described in gdk-config.json file, the published component name will be as you applied.
-
-### Deploying the AWS Greengrass Skeleton Service Component to an AWS Core.
-
-The final step is to deploy the component to a registered AWS Greengrass Core:
-* In the [AWS IoT Console](https://console.aws.amazon.com/iot/) go to **Greengrass >> Core devices** menu item and click on the Greengrass core to deploy too.
-
-* Select the **Deployments** tab and click on the managed deployment to add this component too.
-* Click **Revise**, **Next** then select the **aws-labs-iot-pubsub-framework** (or the renamed) component
-* Click next leaving all fields default until the final page then click **Deploy**
-
-Note: You can monitor the deployment on the Greengrass core in the following logs:
-* **Greengrass Core Log:** /greengrass/v2/greengrass.log and 
-* **Greengrass Component Log:** /greengrass/v2/aws-labs-iot-pubsub-framework.log (or the specified component name.)
-
-### Validating the AWS Greengrass Skeleton Service Component
-
-As an example, the AWS Greengrass Skeleton Service Component publishes a simulated temperature measurement every 5 seconds to the components data topic (aws-greengrass-iot-pubsub-framework/mqtt/data) and will respond to well-formatted **health_check** request with a status object that is configurable from application logic.  
-
-**Verify the Temperature Updates:**
-  * In the [AWS IoT Console](https://console.aws.amazon.com/iot/) go to the **Test** menu and subscribe to the **aws-greengrass-iot-pubsub-framework/mqtt/data** topic. You should see periodic well-formatted updates coming from the Greengrass device to the AWS Core as shown below:
-
-![temp-update-message](/images/temp-update-message.png)
-
-**Send a Greengrass component Health Check Request:**
-  * In the [AWS IoT Console](https://console.aws.amazon.com/iot/) go to the **Test** menu and subscribe to the **aws-greengrass-iot-pubsub-framework/mqtt/data**. (Can use the same session as above if still open). 
-
-  * In the **Publish** section update the publish topic to **aws-greengrass-iot-pubsub-framework/mqtt/service** 
-
-  * Add the below to the Message window and click **Pubish To Topic**
-```
-{
-  "message-id": "20211121022417145690",
-  "reqres": "request",
-  "reply-sdk" : "mqtt",
-  "reply-topic" : "aws-greengrass-iot-pubsub-framework/mqtt/data",
-  "command": "health_check"
 }
 ```
+The SDK will route received PubSub messages to a user defined message handler class and method as provided in the message **route** value. The message route value is a **Class.Method** namespace representation of the desired message route target.  
 
-You should receive a response similar to the below:
-![health-check-message](/images/health-check-message.png)
+Using this approach, the AWS IoT Greengrass PubSub SDK routes PubSub messages to your application logic in easily defined message callbacks.
 
-### Develop the Application Logic. 
-
-At this point in the workflow is where you would start to develop your own application logic. As described in in the previous sections, we use the AWS GDK (Greengrass Deployment Kit) to deploy build and publish this component to AWS Greengrass which automatically manages versioning so it is a valid approach to first deploy this component in its default state and build on its functionality incrementally. 
-
-### Examples
-
-While the component service skeleton describe here provides a good example of a simple single component application, in the [examples](/examples) directory we provide a more sophisticated multi-component example simulating a smart factory application as shown below. 
-
-![smart-factory-example](/images/smart-factory-demo.png)
-
-Once you are familiar with the concepts we encourage you to develop and test multi-component examples like this as it better demonstrates the value of a consistent architecture and messaging formats as provided by the AWS Greengrass IoT PubSub Framework.
-
-### (Optionally) Clean / Delete Unrequired Project Files
-
-This project contains a number of files such as this README and associated images that will be out of context in your project that you may want to remove. Use the below to delete all unnecessary files
-
+### Initialising the SDK and Message Handler Classes
+1.  Add a method that will be the route of last resort for received PubSub messages and the expected message parameters.
 ```
-# CD into the project directory
-cd aws-greengrass-labs-iot-pubsub-framework
+def default_message_handler(self, protocol, topic, message_id, status, route, message):
+   
+   # Process messages without a registered handler router target
+   log.error('Received message to unknown route / message handler: {} - message: {}'.format(route, message)))
+```
 
-# Delete README and associated images
-rm README
-rm -Rf images
+2. Initialise the AWS IoT Greengrass PubSub SDK Client
+```
+# Import the AWS IoT Greengrass PubSub SDK
+from awsgreengrasspubsubsdk.pubsub_client import AwsGreengrassPubSubSdkClient
 
-# Optionally create a new readme for this project
-touch README.md
-echo "# My AWS Greengrass IoT PubSub Application Component" > README.md
+# Declare the PubSub Base topic, this is used to build the default Ingress and Egress PubSub topics.
+pubsub_base_topic = 'com.my_greengrass.application'
 
-# Optionally delete the LICENSE file
-rm LICENSE
-
-# Optionally delete the Examples and Docs file
-rm -Rf examples
-rm -Rf docs
+# Initilise the AwsGreengrassPubSubSdkClient with the pubsub_base_topic and default_message_handler
+pubsub_client = AwsGreengrassPubSubSdkClient(pubsub_base_topic, default_message_handler )
 
 ```
 
-## Summary
+3. Create one or more user defined message handler class/es with named functions to route PubSub messages with the expected parameters. This method allows easy separation of message processing functionality within your application.
+```
+class MyPubSubMessageHandler():
 
-In this guide we have demonstrated how to build, publish and deploy the AWS Greengrass IoT PubSub Framework as a service skeleton and how to interact with it through simple PubSub message updates and requests. At this point we encourage you to read the [Application Architecture and Developers Guide](/docs/architecture-and-developer-guide.md) for this project to better understand how to successfully develop AWS Greengrass components and sophisticated IoT PubSub distributed applications with quality, scale and velocity using the AWS Greengrass IoT PubSub Framework. 
+    def pubsub_message_route_target(self, protocol, topic, message_id, status, route, message):
+        
+        # Process messages with route = 'MyPubSubMessageHandler.pubsub_message_route_target'
+        log.info('MyPubSubMessageHandler.pubsub_message_route_target received message: {}'.format(message))
+```
+
+4. Register the message handler class/es with the PubSub SDK Client with the [register_message_handler](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/docs/api-docs/pubsub_client.md#method-register_message_handler) call.
+```
+my_pubsub_message_handler = MyPubSubMessageHandler()
+pubsub_client.register_message_handler(my_pubsub_message_handler)
+```
+
+5. Activate the IPC and / or MQTT Protocols in the SDK:
+```
+# Activate IPC Protocol
+pubsub_client.activate_ipc_pubsub()
+
+# Acticate MQTT Protocol
+pubsub_client.activate_mqtt_pubsub()
+```
+
+6. Complete!  
+On completion of the above and once successfully deployed, your AWS IoT Greengrass component will listen on the default Ingress topic **(base-pubsub-topic/THING_NAME/ingress)** and any other user defined topics. The SDK will begin routing PubSub messages to your registered Message Handler classes as per the message **route** value. As describe above, any message received on the SDK subscribed topic with value **route = MyPubSubMessageHandler.pubsub_message_route_target** will be automatically forwarded to the method provided in the example. 
+
+**Note:** If the route value does not match any route target methods, the message will be forwarded to the default_message_handler class.
+
+### Subscribing to Custom Topics
+The SDK provides a programmatic means of subscribing to user defined topics. You can subscribe to any topic that is permitted by the access policy provided in the component recipe. 
+```
+my_topic = 'my/interesting/topic'
+
+# Subscribe to topic on IPC
+pubsub_client.subscribe_to_topic('ipc', topic)
+
+# Subscribe to topic on MQTT
+pubsub_client.subscribe_to_topic('mqtt', topic)
+
+# Subscribe to topic on IPC and MQTT
+pubsub_client.subscribe_to_topic('ipc_mqtt', topic)
+
+```
+
+If the protocol (IPC or MQTT) is activated, the SDK will subscribe to the topic and begin routig messages immediatly. If not, the subscription request will be stored and actioned when the selected protocol is activated.
+
+### Publishing Message to PubSub
+The SDK provides a message formatter class to ensure consistent messages. See the [message_formatter](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/docs/api-docs/message_formatter.md) API Docs for more detail.
+
+```
+# Initialise the PubSubMessageFormatter
+from awsgreengrasspubsubsdk.message_formatter import PubSubMessageFormatter
+message_formatter = PubSubMessageFormatter()
+
+# Use the message formatter to create a well-formatted PubSub SDK response message
+receive_route = 'MyPubSubMessageHandler.pubsub_message_response'
+my_message = {
+    "my-message-param01": "param01",
+    "my-message-param02": "param02"
+}
+# Defaults will be applied for parameteres not provided here. See API Docs.
+sdk_format_msg = message_formatter.get_message(route=receive_route, message=my_message)
+
+## Publish the message to IPC and MQTT. 
+pubsub_client.publish_message('ipc_mqtt', sdk_format_msg)
+```
+
+### Installation Issues
+
+1. The AWS IoT Greengrass PubSub SDK (`awsgreengrasspubsubsdk`) installs [awsiotsdk](https://github.com/aws/aws-iot-device-sdk-python-v2) as a dependancy with the following listed [Installation issues](https://github.com/aws/aws-iot-device-sdk-python-v2#installation).
+
+2. If running the AWS IoT Greengrass component with root privileges, you will need to install in a python virtual environment by replacing the component recipe install policy with the below:
+```
+"Install" : {
+          "Timeout" : 300,
+          "Script" : "python3 -m venv pubsubsdk; . pubsubsdk/bin/activate; pip3 install --upgrade pip; python3 -m pip install awsgreengrasspubsubsdk"
+        }
+```
+
+## Samples
+
+A complete production ready AWS IoT Greengrass component template is provided in the [Samples](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/samples) directory.
+
+## Getting Help
+
+The best way to interact with our team is through GitHub. You can [open an issue](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/issues) for guidance, bug reports, or feature requests. 
+
+Please make sure to check out our resources before opening an issue:
+* [Developer Guide](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/docs/developer-guide)
+* [API Docs](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/docs/api-docs)
+* [AWS IoT Greengrass PubSub SDK Deployment Workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/32dc1f13-985f-4f94-9b86-a859806d28f0)
+* [AWS IoT Greengrass V2 Developer Guide](https://docs.aws.amazon.com/greengrass/v2/developerguide/what-is-iot-greengrass.html) 
+* [AWS IoT Core Documentation](https://docs.aws.amazon.com/iot/)
+* [AWS Dev Blog](https://aws.amazon.com/blogs/?awsf.blog-master-iot=category-internet-of-things%23amazon-freertos%7Ccategory-internet-of-things%23aws-greengrass%7Ccategory-internet-of-things%23aws-iot-analytics%7Ccategory-internet-of-things%23aws-iot-button%7Ccategory-internet-of-things%23aws-iot-device-defender%7Ccategory-internet-of-things%23aws-iot-device-management%7Ccategory-internet-of-things%23aws-iot-platform)
+
+## Giving Feedback and Contributions
+
+We need your help in making this SDK great. Please participate in the community and contribute to this effort by submitting issues, participating in discussion forums and submitting pull requests through the following channels.
+
+*   [Contributions Guidelines](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/blob/main/CONTRIBUTING.md)
+*   Submit [Issues, Feature Requests or Bugs](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/issues)
+
+## AWS IoT Core Resources
+
+*   [AWS IoT Core Documentation](https://docs.aws.amazon.com/iot/)
+*   [AWS IoT Developer Guide](https://docs.aws.amazon.com/iot/latest/developerguide/what-is-aws-iot.html) ([source](https://github.com/awsdocs/aws-iot-docs))
+*   [AWS Dev Blog](https://aws.amazon.com/blogs/?awsf.blog-master-iot=category-internet-of-things%23amazon-freertos%7Ccategory-internet-of-things%23aws-greengrass%7Ccategory-internet-of-things%23aws-iot-analytics%7Ccategory-internet-of-things%23aws-iot-button%7Ccategory-internet-of-things%23aws-iot-device-defender%7Ccategory-internet-of-things%23aws-iot-device-management%7Ccategory-internet-of-things%23aws-iot-platform)
+
 
 ## Security
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+See [CONTRIBUTING](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/blob/main/CONTRIBUTING.md#security-issue-notifications) for more information.
 
 ## License
 

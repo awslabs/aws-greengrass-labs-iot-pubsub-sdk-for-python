@@ -1,0 +1,82 @@
+{
+  "RecipeFormatVersion": "2020-01-25",
+  "ComponentName": "COMPONENT_NAME",
+  "ComponentVersion": "0.0.1",
+  "ComponentDescription": "AWS Greengrass PubSub SDK template component.",
+  "ComponentPublisher": "Dean Colcott: <https://www.linkedin.com/in/deancolcott/>",
+  "ComponentConfiguration": {
+    "DefaultConfiguration": {
+      "GGV2PubSubSdkConfig": {
+        "base-pubsub-topic" : "COMPONENT_NAME",
+        "ipc-subscribe-topics" : ["ipc/my-app/broadcast", "ipc/my-app/error"],
+        "mqtt-subscribe-topics" : ["mqtt/my-app/broadcast", "mqtt/my-app/error"]
+      },
+      "accessControl": {
+        "aws.greengrass.ipc.pubsub": {
+          "COMPONENT_NAME:publish:1": {
+            "policyDescription": "Allows access to publish to the component IPC topics.",
+            "operations": [
+              "aws.greengrass#PublishToTopic"
+            ],
+            "resources": [
+              "*"
+            ]
+          },
+          "COMPONENT_NAME:subscribe:1": {
+            "policyDescription": "Allows access to subscribe to the component IPC topics.",
+            "operations": [
+              "aws.greengrass#SubscribeToTopic"
+            ],
+            "resources": [
+              "*"
+            ]
+          }
+        },
+        "aws.greengrass.ipc.mqttproxy": {
+          "COMPONENT_NAME:publish:1": {
+            "policyDescription": "Allows access to publish to the component MQTT topics.",
+            "operations": [
+              "aws.greengrass#PublishToIoTCore"
+            ],
+            "resources": [
+              "*"
+            ]
+          },
+          "COMPONENT_NAME:subscribe:1": {
+            "policyDescription": "Allows access to subscribe to the component MQTT topics.",
+            "operations": [
+              "aws.greengrass#SubscribeToIoTCore"
+            ],
+            "resources": [
+              "*"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Manifests": [
+    {
+      "Name": "Linux",
+      "Platform": {
+        "os": "linux"
+      },
+      "Artifacts": [
+        {
+          "URI": "s3://aws-greengrass-components/src.zip",
+          "Unarchive": "ZIP"
+        }
+      ],
+      "Lifecycle": {
+        "Install" : {
+          "Timeout" : 300,
+          "Script" : "python3 -m pip install awsgreengrasspubsubsdk"
+        },
+        "Run": {
+          "Script": "python3 -u {artifacts:decompressedPath}/src/main.py '{configuration:/GGV2PubSubSdkConfig}'",
+          "RequiresPrivilege": "false"
+        }
+      }
+    }
+  ]
+}
