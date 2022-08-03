@@ -22,7 +22,7 @@ For more details see the AWS IoT Greengrass PubSub SDK:
 
 The easiest way to get started is to build and deploy the AWS IoT Greengrass PubSub SDK component template described in the [Samples](https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python/tree/main/samples) directory.
 
-For new users just starting out with AWS IoT Greengrass or those that want to see a more detailed example of using the SDK to deploy multiple components that we recommend running through the workshop [Build a Distributed IoT Application with the AWS IoT Greengrass PubSub SDK](https://catalog.us-east-1.prod.workshops.aws/workshops/32dc1f13-985f-4f94-9b86-a859806d28f0/en-US) where you build a Smar Factory IoT application usng the AWS Iot Greengrass PubSub SDK. 
+For new users just starting out with AWS IoT Greengrass or those that want to see a more detailed example of using the SDK to deploy multiple components that we recommend running through the workshop [Build a Distributed IoT Application with the AWS IoT Greengrass PubSub SDK](https://catalog.us-east-1.prod.workshops.aws/workshops/32dc1f13-985f-4f94-9b86-a859806d28f0/en-US) where you build a Smart Factory IoT application using the AWS IoT Greengrass PubSub SDK. 
 
 ## Installation
 
