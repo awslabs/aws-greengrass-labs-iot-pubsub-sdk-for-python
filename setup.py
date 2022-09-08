@@ -18,7 +18,7 @@ setup(
     description='AWS Greengrass IoT Pubsub SDK for Python',
     long_description=_load_readme(),
     long_description_content_type='text/markdown',
-    url='https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python',
+    url='https://github.com/awslabs/aws-greengrass-labs-iot-pubsub-sdk-for-python',
     author='Dean Colcott',
     author_email='dean.colcott@gmail.com',
     license='License :: OSI Approved :: MIT License',

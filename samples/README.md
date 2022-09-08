@@ -20,7 +20,7 @@ In the following steps we will copy the AWS Greengrass PubSub SDK component temp
 
 ```
 # Clone this GIT Repository
-git clone https://github.com/aws-samples/aws-greengrass-pubsub-sdk-for-python.git
+git clone https://github.com/awslabs/aws-greengrass-labs-iot-pubsub-sdk-for-python.git
 
 # Take a copy of the selected component template and rename to your desired component name.
 MY_COMPONENT_NAME=com.example.greengrass-pubsub-component
