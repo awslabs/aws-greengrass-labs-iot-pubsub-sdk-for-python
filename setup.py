@@ -14,7 +14,7 @@ def _load_readme():
 
 setup(
     name='awsgreengrasspubsubsdk',
-    version='0.1.4',  
+    version='0.1.5',  
     description='AWS Greengrass IoT Pubsub SDK for Python',
     long_description=_load_readme(),
     long_description_content_type='text/markdown',
